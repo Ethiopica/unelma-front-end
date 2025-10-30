@@ -34,7 +34,7 @@ function NavBar() {
   const handleNavToggle = () => setMobile((prev) => !prev);
 
   const mobileMenu = (
-    <Box onClick={handleNavToggle} sx={{ textAlign: "center" }}>
+    <Box sx={{ textAlign: "center" }}>
       <Box
         sx={{
           display: "flex",
@@ -50,7 +50,7 @@ function NavBar() {
         >
           Login/Register
         </Button>
-        <IconButton color="inherit">
+        <IconButton color="inherit" onClick={handleNavToggle}>
           <ClearOutlinedIcon />
         </IconButton>
       </Box>
