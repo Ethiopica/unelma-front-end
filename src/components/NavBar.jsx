@@ -14,17 +14,20 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router";
+import Logo from "./Logo.jsx";
 
-function NavBar({ mode, toggleTheme }) {
+function NavBar() {
   const mobileMenuWidth = 240;
   const navItems = [
-    { label: "Home", path: "/" },
     { label: "Products", path: "/products" },
     { label: "Blog", path: "/blog" },
     { label: "About", path: "/about" },
     { label: "Contact us", path: "/contact" },
-    { label: "Log in/Register", path: "/login" },
   ];
   const [mobile, setMobile] = useState(false);
 
@@ -32,9 +35,25 @@ function NavBar({ mode, toggleTheme }) {
 
   const mobileMenu = (
     <Box onClick={handleNavToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        Unelma Platforms
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          my: 1,
+        }}
+      >
+        <Button
+          color="inherit"
+          component={Link}
+          to="/user"
+          sx={{ textTransform: "none", fontSize: "1rem" }}
+        >
+          Login/Register
+        </Button>
+        <IconButton color="inherit">
+          <ClearOutlinedIcon />
+        </IconButton>
+      </Box>
       <Divider />
       <List>
         {navItems.map((item) => (
@@ -58,19 +77,7 @@ function NavBar({ mode, toggleTheme }) {
       <AppBar component="nav" position="fixed" color="inherit">
         <Toolbar>
           {/* logo */}
-          <Box
-            sx={{
-              height: "3rem",
-              p: 1,
-              flexGrow: 1,
-            }}
-          >
-            <img
-              src="https://www.unelmaplatforms.com/assets/uploads/media-uploader/unelma-platforms-11670581545.jpg"
-              alt="unelma-logo"
-              style={{ height: "100%" }}
-            />
-          </Box>
+          <Logo />
           {/* Desktop Nav Items */}
           <Box sx={{ display: { xs: "none", md: "block" } }}>
             {navItems.map((item) => (
@@ -87,17 +94,33 @@ function NavBar({ mode, toggleTheme }) {
               </Button>
             ))}
           </Box>
+          {/* Buttons on the right side of the NavBar */}
+          <Box component="div" sx={{ marginLeft: "auto", display: "flex" }}>
+            {/* Search */}
+            <IconButton color="inherit">
+              <SearchOutlinedIcon />
+              {/* search logic */}
+            </IconButton>
+            {/*Product cart button */}
+            <IconButton color="inherit" component={Link} to="/cart">
+              <ShoppingCartOutlinedIcon />
+            </IconButton>
+            {/* Login/Register button */}
+            <IconButton color="inherit" component={Link} to="/user">
+              <AccountCircleOutlinedIcon />
+            </IconButton>
 
-          {/* Mobile Menu Button */}
-          <IconButton
-            color="inherit"
-            aria-label="open MobileMenu"
-            edge="end"
-            onClick={handleNavToggle}
-            sx={{ display: { xs: "flex", md: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
+            {/* Mobile Menu Button */}
+            <IconButton
+              color="inherit"
+              aria-label="open MobileMenu"
+              edge="end"
+              onClick={handleNavToggle}
+              sx={{ display: { xs: "flex", md: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
