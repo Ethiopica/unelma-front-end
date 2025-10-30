@@ -14,15 +14,17 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Link } from "react-router";
 
 function NavBar({ mode, toggleTheme }) {
   const mobileMenuWidth = 240;
   const navItems = [
-    { label: "Home", path: "#" },
+    { label: "Home", path: "/" },
     { label: "Products", path: "/products" },
     { label: "Blog", path: "/blog" },
     { label: "About", path: "/about" },
     { label: "Contact us", path: "/contact" },
+    { label: "Log in/Register", path: "/login" },
   ];
   const [mobile, setMobile] = useState(false);
 
@@ -37,7 +39,11 @@ function NavBar({ mode, toggleTheme }) {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }} href={item.path}>
+            <ListItemButton
+              sx={{ textAlign: "center" }}
+              component={Link}
+              to={item.path}
+            >
               <ListItemText primary={item.label} />
             </ListItemButton>
           </ListItem>
@@ -49,52 +55,62 @@ function NavBar({ mode, toggleTheme }) {
   return (
     <Box sx={{ display: "flex" }}>
       {/* App Bar */}
-      <AppBar component="nav" position="fixed" color="white">
+      <AppBar component="nav" position="fixed" color="inherit">
         <Toolbar>
-          {/* Mobile Menu Button */}
-          <IconButton
-            color="inherit"
-            aria-label="open MobileMenu"
-            edge="start"
-            onClick={handleNavToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
           {/* logo */}
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          <Box
+            sx={{
+              height: "3rem",
+              p: 1,
+              flexGrow: 1,
+            }}
           >
-            Unelma logo
-          </Typography>
-
+            <img
+              src="https://www.unelmaplatforms.com/assets/uploads/media-uploader/unelma-platforms-11670581545.jpg"
+              alt="unelma-logo"
+              style={{ height: "100%" }}
+            />
+          </Box>
           {/* Desktop Nav Items */}
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
             {navItems.map((item) => (
               <Button
                 key={item.label}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-                href={item.path}
+                sx={{
+                  color: (theme) => theme.palette.text.primary,
+                  textTransform: "none",
+                }}
+                component={Link}
+                to={item.path}
               >
                 {item.label}
               </Button>
             ))}
           </Box>
+
+          {/* Mobile Menu Button */}
+          <IconButton
+            color="inherit"
+            aria-label="open MobileMenu"
+            edge="end"
+            onClick={handleNavToggle}
+            sx={{ display: { xs: "flex", md: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
       {/* MobileMenu */}
       <Box component="nav">
         <Drawer
+          anchor="right"
           variant="temporary"
           open={mobile}
           onClose={handleNavToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: "block", sm: "none" },
+            display: { md: "block", lg: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: mobileMenuWidth,
