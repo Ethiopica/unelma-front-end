@@ -58,3 +58,52 @@ export const getImageUrl = (imageUrl) => {
  * Export placeholder logo for use in onError handlers
  */
 export { placeholderLogo };
+
+export const slugify = (string) => {
+  return string
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-") // only keep alphanumeric charater
+    .substring(0, 50) // Limit length to 50
+    .replace(/^-+|-+$/g, ""); // Remove extra hyphens
+};
+
+//handle item click for product, service, blog
+export const handleItemClick = (navigate, item, resourceName) => {
+  const slug = item?.slug || slugify(item.title || item.name);
+  navigate(`/${resourceName}/${item.id}/${slug}`);
+};
+
+//select item based on id from url params, useful for detail pages
+export const selectItem = (
+  items,
+  id,
+  slug,
+  setSelectedItem,
+  clearSelectedItem,
+  navigate,
+  resourceName
+) => {
+  if (!items | (items.length === 0)) return;
+
+  const foundItem = items.find((i) => i.id === Number(id));
+
+  if (foundItem) {
+    setSelectedItem(foundItem);
+
+    const correctSlug =
+      foundItem?.slug || slugify(foundItem.title || foundItem.name);
+    if (slug !== correctSlug) {
+      navigate(`/${resourceName}/${id}/${correctSlug}`, {
+        replace: true,
+      });
+    }
+  } else {
+    clearSelectedItem();
+  }
+};
+
+//handle category click for blogs
+export const handleCategoryClick = (category, navigate) => {
+  navigate(`/blogs/categories/${category}`);
+};

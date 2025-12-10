@@ -6,9 +6,14 @@ import {
 import React, { useMemo } from "react";
 import { Box, Card, CardContent, CardHeader, CardMedia } from "@mui/material";
 
-import { getImageUrl, timeConversion } from "../helpers/helpers";
+import {
+  getImageUrl,
+  handleCategoryClick,
+  handleItemClick,
+  timeConversion,
+} from "../../helpers/helpers";
 import { useNavigate } from "react-router";
-import FavoriteButtonAndCount from "./FavoriteButtonAndCount";
+import FavoriteButtonAndCount from "../favorite/FavoriteButtonAndCount";
 
 function SuggestedBlog({ currentBlog, allBlogs }) {
   const navigate = useNavigate();
@@ -30,8 +35,8 @@ function SuggestedBlog({ currentBlog, allBlogs }) {
     suggestedBlogs = suggestedBlogs.slice(0, 2);
   }
 
-  const handleBlogClick = (blogId) => {
-    navigate(`/blogs/${blogId}`);
+  const handleBlogClick = (blog) => {
+    handleItemClick(navigate, blog, "blogs");
   };
 
   if (suggestedBlogs.length === 0) {
@@ -42,12 +47,7 @@ function SuggestedBlog({ currentBlog, allBlogs }) {
     <>
       <Typography
         variant="h3"
-        sx={{
-          textAlign: "center",
-          marginBlock: 4,
-          fontWeight: 500,
-          color: (theme) => theme.palette.text.primary,
-        }}
+        sx={{ textAlign: "center", marginBlock: 4, fontWeight: 500 }}
       >
         You might also like:
       </Typography>
@@ -85,21 +85,18 @@ function SuggestedBlog({ currentBlog, allBlogs }) {
           >
             <CardMedia
               component="img"
-              onClick={() => handleBlogClick(blog.id)}
-              src={getImageUrl(
-                blog.featured_image_local_url ||
-                  blog.featured_image_url ||
-                  blog.featured_image ||
-                  blog.image_local_url ||
-                  blog.image_url
-              )}
+              onClick={() => handleBlogClick(blog)}
+              src={
+                blog.image_url ||
+                getImageUrl(blog.featured_image_url || blog.featured_image)
+              }
               alt={blog.title}
               sx={{
                 width: "100%",
                 height: "13rem",
                 objectFit: "cover",
                 display: "block",
-                padding: 0,
+                p: 0,
                 cursor: "pointer",
                 backgroundColor: (theme) => theme.palette.background.paper,
               }}
@@ -110,15 +107,16 @@ function SuggestedBlog({ currentBlog, allBlogs }) {
                   variant="subtitle1"
                   sx={{
                     color: (theme) => theme.palette.text.secondary,
-
                     textTransform: "uppercase",
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleCategoryClick(blog.category, navigate)}
                 >
                   {blog.category}
                 </Typography>
               )}
               <CardHeader
-                onClick={() => handleBlogClick(blog.id)}
+                onClick={() => handleBlogClick(blog)}
                 title={
                   <Typography
                     variant="h5"
@@ -159,7 +157,7 @@ function SuggestedBlog({ currentBlog, allBlogs }) {
                       {blog.content.substring(0, 150)}
                       <Box
                         component="span"
-                        onClick={() => handleBlogClick(blog.id)}
+                        onClick={() => handleBlogClick(blog)}
                         sx={{
                           textDecoration: "none",
                           color: (theme) => theme.palette.primary.main,
