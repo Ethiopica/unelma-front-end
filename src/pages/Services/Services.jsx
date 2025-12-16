@@ -9,6 +9,7 @@ import {
   IconButton,
   Pagination,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -322,11 +323,12 @@ function Services() {
               >
                 {paginatedServices.map((service) => {
                   const ServiceIconComponent = getServiceIcon(service.name);
+                  const slug = getServiceSlug(service.name);
                   return (
                     <Card
                       key={service.id}
                       onClick={() => {
-                        navigate(`/services/${service.serviceId}`);
+                        navigate(`/services/${service.id}/${slug}`);
                       }}
                       sx={{
                         backgroundColor: (theme) =>
@@ -423,17 +425,32 @@ function Services() {
                               />
                             </Box>
                           )}
-                          <Typography
-                            variant="h5"
-                            component="h3"
-                            sx={{
-                              fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                              fontWeight: 600,
-                              color: (theme) => theme.palette.text.primary,
-                            }}
-                          >
-                            {service.name}
-                          </Typography>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 0.5 }}>
+                            <Typography
+                              variant="h5"
+                              component="h3"
+                              sx={{
+                                fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                                fontWeight: 600,
+                                color: (theme) => theme.palette.text.primary,
+                              }}
+                            >
+                              {service.name}
+                            </Typography>
+                            <Chip
+                              label={service.payment_type === "subscription" ? "Subscription" : "One-time"}
+                              size="small"
+                              color={service.payment_type === "subscription" ? undefined : "primary"}
+                              sx={{ 
+                                height: 22, 
+                                fontSize: "0.7rem",
+                                ...(service.payment_type === "subscription" ? {
+                                  backgroundColor: "#E57A44",
+                                  color: "#FFFFFF"
+                                } : {})
+                              }}
+                            />
+                          </Box>
                         </Box>
                         <Typography
                           variant="body1"

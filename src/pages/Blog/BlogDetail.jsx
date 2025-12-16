@@ -73,17 +73,18 @@ function BlogDetail() {
 
   // sort comments based on sortOrder
   useEffect(() => {
-    if (selectedBlog?.comments?.length > 0) {
-      const sorted = [...selectedBlog.comments];
-
-      sortOrder === "newest"
-        ? sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        : sorted.sort(
-            (a, b) => new Date(a.created_at) - new Date(b.created_at)
-          );
-
-      setSortedComment(sorted);
+    if (!selectedBlog?.comments?.length) {
+      setSortedComment([]);
+      return;
     }
+
+    const sorted = [...selectedBlog.comments];
+
+    sortOrder === "newest"
+      ? sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      : sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    setSortedComment(sorted);
   }, [sortOrder, selectedBlog]);
 
   const handleTagClick = (tag) => {
@@ -110,11 +111,11 @@ function BlogDetail() {
       dispatch(setSelectedBlog(res.data.data));
       setNewComment("");
     } catch (e) {
-      console.error(e);
+      // Error handled silently
     }
   };
 
-  if (loading || blogs.length === 0) {
+  if (loading) {
     return (
       <Box
         sx={{
