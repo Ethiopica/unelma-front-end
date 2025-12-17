@@ -22,13 +22,12 @@ function Careers() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { jobs, loading, error } = useSelector((state) => state.careers);
-  // console.log(jobs);
 
   // fetch jobs on jobs.length is empty
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(fetchCareers());
-      console.log(jobs);
+      // console.log(jobs);
     }
   }, [jobs, dispatch]);
 
@@ -192,7 +191,11 @@ function Careers() {
                         >
                           <Box sx={{ display: "flex" }}>
                             <LocationPinIcon />
-                            <Typography variant="p">Helsinki</Typography>
+                            <Typography variant="p">
+                              {job.location.includes(",")
+                                ? `${job.location.split(",")[0]} +${job.location.split(",").length - 1}`
+                                : job.location}
+                            </Typography>
                           </Box>
                           <CardActions>
                             <Button

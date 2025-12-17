@@ -5,7 +5,7 @@ import {
   fetchServices,
   setSelectedService,
   clearSelectedService,
-} from "../../lib/features/services/servicesSlice";
+} from "../../store/slices/services/servicesSlice";
 import {
   Box,
   Typography,
@@ -36,6 +36,7 @@ import { commonButtonStyles } from "../../constants/styles";
 import { useAuth } from "../../context/AuthContext";
 import { createCheckoutSession } from "../../lib/api/paymentService";
 import FavoriteButtonAndCount from "../../components/favorite/FavoriteButtonAndCount";
+import SuggestedServices from "../../components/service/SuggestedServices";
 
 // Helper function to map service name to icon
 const getServiceIcon = (serviceName) => {
@@ -225,8 +226,8 @@ function ServiceDetail() {
     );
   }
 
-  const IconComponent = service.icon || getServiceIcon(service.name);
-
+  const IconComponent = getServiceIcon(service.name);
+  // const IconComponent = service.icon || getServiceIcon(service.name);
   return (
     <Box
       sx={{
@@ -700,6 +701,9 @@ function ServiceDetail() {
           </Grid>
         </Box>
       </Box>
+
+      {/* Suggested Services */}
+      <SuggestedServices currentService={selectedService} allServices={services} />
 
       {/* Payment Error Alert */}
       {paymentError && (
