@@ -10,6 +10,7 @@ import {
   DialogContent,
   IconButton,
 } from "@mui/material";
+import { darken } from "@mui/material/styles";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CloseIcon from "@mui/icons-material/Close";
@@ -168,30 +169,24 @@ function Home() {
                   fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
                   fontWeight: 400,
                   borderRadius: 2,
-                  boxShadow: "none",
                   textTransform: "none",
                   whiteSpace: "nowrap",
                   width: { xs: "auto", md: "fit-content" },
                   border: (theme) => `1px solid ${theme.palette.primary.main}`,
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === "light"
-                      ? "rgba(0, 0, 0, 0.03)"
-                      : "transparent",
-                  color: (theme) => theme.palette.text.primary,
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
+                  backgroundColor: (theme) => theme.palette.primary.main,
+                  color: "#FFFFFF",
                   boxShadow: (theme) =>
                     theme.palette.mode === "light"
                       ? "0 2px 8px rgba(0, 0, 0, 0.05)"
-                      : "none",
+                      : "0 4px 12px rgba(0, 0, 0, 0.3)",
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary.main,
+                    backgroundColor: (theme) =>
+                      darken(theme.palette.primary.main, 0.2),
                     color: "#FFFFFF",
-                    borderColor: (theme) => theme.palette.primary.main,
+                    borderColor: (theme) =>
+                      darken(theme.palette.primary.main, 0.2),
                     transform: "translate3d(0, -4px, 0)",
-                    backdropFilter: "none",
-                    WebkitBackdropFilter: "none",
                     boxShadow: (theme) =>
                       theme.palette.mode === "light"
                         ? "0 4px 12px rgba(0, 0, 0, 0.1)"
@@ -227,44 +222,41 @@ function Home() {
               sx={{
                 width: { xs: "100%", md: "50%" },
                 order: { xs: 1, md: 2 },
-                padding: { xs: 2, sm: 3, md: 4 },
-                paddingLeft: { xs: 2, sm: 3, md: 12 },
-                "& p": {
-                  fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
-                  fontWeight: 400,
-                  color: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.9)"
-                      : theme.palette.text.primary,
-                  lineHeight: 1.8,
-                  textAlign: "left",
-                  maxWidth: "900px",
-                  marginBottom: { xs: "1rem", sm: "1.5rem" },
-                  marginTop: 0,
-                  "&:last-child": {
-                    marginBottom: 0,
-                  },
-                },
               }}
             >
               {/* Title */}
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "flex-start", sm: "center" },
                   gap: 2,
                   flexWrap: "wrap",
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "light"
+                      ? "rgba(0, 0, 0, 0.15)"
+                      : "rgba(31, 31, 31, 0.91)",
+                  border: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "1px solid rgba(255, 255, 255, 0.1)"
+                      : "1px solid rgba(0, 0, 0, 0.1)",
+                  borderRadius: 2,
+                  padding: { xs: 2, sm: 2.5, md: 3.5 },
+                  boxShadow: (theme) =>
+                    theme.palette.mode === "light"
+                      ? "0 2px 8px rgba(0, 0, 0, 0.05)"
+                      : "none",
                 }}
               >
                 <Typography
                   variant="h1"
                   component="h1"
                   sx={{
+                    minWidth: 0,
                     fontSize: {
-                      xs: "2rem",
-                      sm: "2.5rem",
-                      md: "3.5rem",
-                      lg: "4rem",
+                      sm: "1.75rem",
+                      md: "2.25rem",
+                      lg: "3.25rem",
                     },
                     fontWeight: 700,
                     color: (theme) =>
@@ -273,18 +265,26 @@ function Home() {
                         : theme.palette.text.primary,
                     marginBottom: 0,
                     lineHeight: 1.2,
-                    textAlign: "left",
+                    textAlign: { xs: "center", sm: "left" },
                     flex: 1,
-                    minWidth: { xs: "100%", sm: "auto" },
                   }}
                 >
-                  We are Software Platform Development Company
+                  Empowering Growth with{" "}
+                  <Box
+                    component="span"
+                    sx={{
+                      color: (theme) => theme.palette.primary.main,
+                    }}
+                  >
+                    Innovative Software Platforms
+                  </Box>
                 </Typography>
 
                 {/* Arrow Icon Button */}
                 <IconButton
                   onClick={handleOpenModal}
                   sx={{
+                    alignSelf: { xs: "flex-end", sm: "auto" },
                     color: (theme) => theme.palette.primary.main,
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark"
@@ -321,12 +321,7 @@ function Home() {
         PaperProps={{
           sx: {
             borderRadius: { xs: 3, sm: 4 },
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? "rgba(0, 0, 0, 0.03)"
-                : "transparent",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
+            backgroundColor: (theme) => theme.palette.background.overlay,
             border: (theme) =>
               theme.palette.mode === "dark"
                 ? "1px solid rgba(255, 255, 255, 0.1)"
@@ -365,7 +360,9 @@ function Home() {
               fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
               fontWeight: 700,
               color: (theme) =>
-                theme.palette.mode === "light" ? "#FFFFFF" : theme.palette.text.primary,
+                theme.palette.mode === "light"
+                  ? "#FFFFFF"
+                  : theme.palette.text.primary,
               flex: 1,
             }}
           >
@@ -374,7 +371,9 @@ function Home() {
               component="span"
               sx={{
                 color: (theme) =>
-                  theme.palette.mode === "light" ? "#000000" : theme.palette.primary.main,
+                  theme.palette.mode === "light"
+                    ? "#000000"
+                    : theme.palette.primary.main,
               }}
             >
               Innovative Software Platforms
@@ -384,7 +383,9 @@ function Home() {
             onClick={handleCloseModal}
             sx={{
               color: (theme) =>
-                theme.palette.mode === "light" ? "#FFFFFF" : theme.palette.text.secondary,
+                theme.palette.mode === "light"
+                  ? "#FFFFFF"
+                  : theme.palette.text.secondary,
               "&:hover": {
                 backgroundColor: (theme) =>
                   theme.palette.mode === "dark"
@@ -404,7 +405,9 @@ function Home() {
               fontSize: { xs: "1rem", sm: "1.125rem" },
               fontWeight: 400,
               color: (theme) =>
-                theme.palette.mode === "light" ? "#FFFFFF" : theme.palette.text.primary,
+                theme.palette.mode === "light"
+                  ? "#FFFFFF"
+                  : theme.palette.text.primary,
               lineHeight: 1.8,
               marginBottom: "1.5rem",
               "&:last-child": {
@@ -471,7 +474,7 @@ function Home() {
               return (
                 <Card
                   key={service.id}
-                  onClick={() => navigate(`/services/${service.serviceId}`)}
+                  onClick={() => navigate(`/services/${service.id}`)}
                   sx={{
                     flex: {
                       xs: "1 1 100%",
