@@ -285,11 +285,13 @@ function Careers() {
                               />
                             }
                             label={
-                              job.location.includes(",")
-                                ? `${job.location.split(",")[0]} +${
-                                    job.location.split(",").length - 1
-                                  }`
-                                : job.location
+                              job.location
+                                ? job.location.includes(",")
+                                  ? `${job.location.split(",")[0]} +${
+                                      job.location.split(",").length - 1
+                                    }`
+                                  : job.location
+                                : "Remote"
                             }
                             size="small"
                             sx={{
