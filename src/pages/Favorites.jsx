@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
-import FavoriteButton from "../components/FavoriteButton";
+import FavoriteButton from "../components/favorite/FavoriteButton";
 import {
   Box,
   darken,
@@ -9,14 +9,14 @@ import {
   Paper,
   Stack,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { fetchBlogs } from "../store/slices/blogs/blogsSlice";
 import { fetchProducts } from "../store/slices/products/productsSlice";
-
 import CenteredMessage from "../components/CenteredMessage";
-import { fetchServices } from "../lib/features/services/servicesSlice";
 import HandleBackButton from "../components/HandleBackButton";
 import { Link } from "react-router";
+import { fetchServices } from "../store/slices/services/servicesSlice";
 
 function Favorites() {
   const { user, token } = useAuth();
@@ -77,9 +77,16 @@ function Favorites() {
 
   if (loading) {
     return (
-      <CenteredMessage>
-        <Typography variant="h4">Loading favorites ...</Typography>
-      </CenteredMessage>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+        }}
+      >
+        <CircularProgress />
+      </Box>
     );
   }
 

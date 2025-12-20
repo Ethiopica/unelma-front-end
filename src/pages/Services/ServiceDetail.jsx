@@ -5,7 +5,7 @@ import {
   fetchServices,
   setSelectedService,
   clearSelectedService,
-} from "../../lib/features/services/servicesSlice";
+} from "../../store/slices/services/servicesSlice";
 import {
   Box,
   Typography,
@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Chip,
 } from "@mui/material";
 import { useContactForm } from "../../hooks/useContactForm";
 import StyledTextField from "../../components/StyledTextField";
@@ -34,7 +35,8 @@ import ComputerIcon from "@mui/icons-material/Computer";
 import { commonButtonStyles } from "../../constants/styles";
 import { useAuth } from "../../context/AuthContext";
 import { createCheckoutSession } from "../../lib/api/paymentService";
-import FavoriteButtonAndCount from "../../components/FavoriteButtonAndCount";
+import FavoriteButtonAndCount from "../../components/favorite/FavoriteButtonAndCount";
+import SuggestedServices from "../../components/service/SuggestedServices";
 
 // Helper function to map service name to icon
 const getServiceIcon = (serviceName) => {
@@ -124,7 +126,8 @@ function ServiceDetail() {
         dispatch(setSelectedService(foundService));
         const serviceSlug = getServiceSlug(foundService.name);
         if (serviceId !== serviceSlug) {
-          navigate(`/services/${serviceSlug}`, { replace: true });
+          // navigate(`/services/${serviceSlug}`, { replace: true });
+          navigate(`/services/${serviceId}/${serviceSlug}`, { replace: true });
         }
       } else {
         dispatch(clearSelectedService());
@@ -148,7 +151,7 @@ function ServiceDetail() {
 
     try {
       // Check if Stripe Price ID is available (required)
-      if (!plan.stripePriceId) {
+      if (!plan.stripe_price_id) {
         setPaymentError(
           "This plan is not yet available for purchase. Please contact support."
         );
@@ -158,7 +161,7 @@ function ServiceDetail() {
 
       // Prepare comprehensive payment data with all metadata for order tracking
       const paymentData = {
-        stripePriceId: plan.stripePriceId,
+        stripePriceId: plan.stripe_price_id,
         serviceId: serviceId,
         serviceName: service.name,
         planName: plan.name,
@@ -179,7 +182,6 @@ function ServiceDetail() {
         setPaymentLoading(null);
       }
     } catch (error) {
-      console.error("Payment error:", error);
       setPaymentError("An unexpected error occurred. Please try again.");
       setPaymentLoading(null);
     }
@@ -224,8 +226,8 @@ function ServiceDetail() {
     );
   }
 
-  const IconComponent = service.icon || getServiceIcon(service.name);
-
+  const IconComponent = getServiceIcon(service.name);
+  // const IconComponent = service.icon || getServiceIcon(service.name);
   return (
     <Box
       sx={{
@@ -401,8 +403,8 @@ function ServiceDetail() {
                           sx={{
                             backgroundColor: (theme) =>
                               theme.palette.mode === "light"
-                                ? theme.palette.background.paper
-                                : theme.palette.background.paper,
+                                ? "rgba(0, 0, 0, 0.03)"
+                                : "transparent",
                             border: (theme) =>
                               theme.palette.mode === "dark"
                                 ? "1px solid rgba(255, 255, 255, 0.1)"
@@ -413,25 +415,65 @@ function ServiceDetail() {
                             display: "flex",
                             flexDirection: "column",
                             transition: "all 0.3s ease",
+                            boxShadow: (theme) =>
+                              theme.palette.mode === "light"
+                                ? "0 2px 8px rgba(0, 0, 0, 0.05)"
+                                : "none",
                             "&:hover": {
                               borderColor: (theme) =>
                                 theme.palette.primary.main,
                               transform: "translateY(-4px)",
+                              boxShadow: (theme) =>
+                                theme.palette.mode === "light"
+                                  ? "0 4px 12px rgba(0, 0, 0, 0.1)"
+                                  : "0 8px 32px rgba(0, 0, 0, 0.3)",
                             },
                           }}
                         >
-                          <Typography
-                            variant="h4"
-                            component="h3"
+                          <Box
                             sx={{
-                              fontSize: { xs: "1.5rem", sm: "1.75rem" },
-                              fontWeight: 600,
-                              color: (theme) => theme.palette.text.primary,
-                              marginBottom: "1rem",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                              flexWrap: "wrap",
+                              mb: 1,
                             }}
                           >
-                            {plan.name}
-                          </Typography>
+                            <Typography
+                              variant="h4"
+                              component="h3"
+                              sx={{
+                                fontSize: { xs: "1.5rem", sm: "1.75rem" },
+                                fontWeight: 600,
+                                color: (theme) => theme.palette.text.primary,
+                              }}
+                            >
+                              {plan.name}
+                            </Typography>
+                            <Chip
+                              label={
+                                plan.payment_type === "subscription"
+                                  ? "Subscription"
+                                  : "One-time"
+                              }
+                              size="small"
+                              color={
+                                plan.payment_type === "subscription"
+                                  ? undefined
+                                  : "primary"
+                              }
+                              sx={{
+                                height: 24,
+                                fontSize: "0.75rem",
+                                ...(plan.payment_type === "subscription"
+                                  ? {
+                                      backgroundColor: "#E57A44",
+                                      color: "#FFFFFF",
+                                    }
+                                  : {}),
+                              }}
+                            />
+                          </Box>
                           <Box
                             sx={{
                               display: "flex",
@@ -502,7 +544,7 @@ function ServiceDetail() {
                               backgroundColor: (theme) =>
                                 theme.palette.primary.main,
                               color: "#FFFFFF",
-                              fontWeight: 100,
+                              fontWeight: 400,
                               borderRadius: 2,
                               boxShadow: "none",
                               textTransform: "none",
@@ -557,13 +599,20 @@ function ServiceDetail() {
               >
                 <Card
                   sx={{
-                    backgroundColor: (theme) => theme.palette.background.paper,
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "light"
+                        ? "rgba(0, 0, 0, 0.03)"
+                        : "transparent",
                     border: (theme) =>
                       theme.palette.mode === "dark"
                         ? "1px solid rgba(255, 255, 255, 0.1)"
                         : "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: 2,
                     padding: { xs: "2rem", sm: "2.5rem" },
+                    boxShadow: (theme) =>
+                      theme.palette.mode === "light"
+                        ? "0 2px 8px rgba(0, 0, 0, 0.05)"
+                        : "none",
                   }}
                 >
                   <Typography
@@ -668,6 +717,12 @@ function ServiceDetail() {
         </Box>
       </Box>
 
+      {/* Suggested Services */}
+      <SuggestedServices
+        currentService={selectedService}
+        allServices={services}
+      />
+
       {/* Payment Error Alert */}
       {paymentError && (
         <Alert
@@ -723,7 +778,7 @@ function ServiceDetail() {
             sx={{
               backgroundColor: (theme) => theme.palette.primary.main,
               color: "#FFFFFF",
-              fontWeight: 100,
+              fontWeight: 400,
               borderRadius: 2,
               textTransform: "none",
               "&:focus": {

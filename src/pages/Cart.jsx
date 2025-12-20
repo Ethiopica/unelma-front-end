@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
@@ -10,17 +10,30 @@ import {
   Button,
   Divider,
   TextField,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { removeFromCart, updateQuantity, clearCart } from "../lib/features/cart/cartSlice";
-import PriceDisplay from "../components/PriceDisplay";
+import {
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+} from "../store/slices/cart/cartSlice";
 import { getImageUrl, placeholderLogo } from "../helpers/helpers";
+import { createCartCheckoutSession } from "../lib/api/paymentService";
+import { getAuthToken } from "../utils/authUtils";
+import PriceDisplay from "../components/product/PriceDisplay";
 
 function Cart() {
   const dispatch = useDispatch();
   const { items } = useSelector((state) => state.cart);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState(null);
+
+  const localStorageToken = getAuthToken();
+  const isAuthenticated = !!localStorageToken;
 
   const handleRemoveItem = (productId) => {
     dispatch(removeFromCart(productId));
@@ -36,6 +49,42 @@ function Cart() {
 
   const handleClearCart = () => {
     dispatch(clearCart());
+  };
+
+  const handleCheckout = async () => {
+    // Check authentication
+    if (!isAuthenticated) {
+      setCheckoutError("Please log in to proceed with checkout.");
+      return;
+    }
+
+    // Check if cart is empty
+    if (items.length === 0) {
+      setCheckoutError("Your cart is empty.");
+      return;
+    }
+
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+
+    try {
+      // Call backend to create Stripe session
+      const result = await createCartCheckoutSession(items);
+
+      if (result.success && result.url) {
+        // Redirect to Stripe Checkout page
+        window.location.href = result.url;
+      } else {
+        setCheckoutError(
+          result.message ||
+            "Failed to create checkout session. Please try again."
+        );
+        setCheckoutLoading(false);
+      }
+    } catch (error) {
+      setCheckoutError("An unexpected error occurred. Please try again.");
+      setCheckoutLoading(false);
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -109,7 +158,7 @@ function Cart() {
                 sx={{
                   backgroundColor: (theme) => theme.palette.primary.main,
                   color: "#FFFFFF",
-                  fontWeight: 100,
+                  fontWeight: 400,
                   borderRadius: 2,
                   boxShadow: "none",
                   textTransform: "none",
@@ -132,10 +181,11 @@ function Cart() {
                   <Card
                     key={item.id}
                     sx={{
-                      backgroundColor: (theme) => theme.palette.background.paper,
-                      border: (theme) => 
-                        theme.palette.mode === 'dark' 
-                          ? "1px solid rgba(255, 255, 255, 0.1)" 
+                      backgroundColor: (theme) =>
+                        theme.palette.background.paper,
+                      border: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "1px solid rgba(255, 255, 255, 0.1)"
                           : "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: 2,
                       transition: "all 0.3s ease",
@@ -157,7 +207,9 @@ function Cart() {
                         {/* Product Image */}
                         <CardMedia
                           component="img"
-                          src={getImageUrl(item.image_local_url || item.image_url || item.image)}
+                          src={getImageUrl(
+                            item.image_local_url || item.image_url || item.image
+                          )}
                           alt={item.name}
                           onError={(e) => {
                             e.target.src = placeholderLogo;
@@ -167,7 +219,8 @@ function Cart() {
                             height: { xs: "200px", md: "150px" },
                             objectFit: "cover",
                             borderRadius: 2,
-                            backgroundColor: (theme) => theme.palette.background.paper,
+                            backgroundColor: (theme) =>
+                              theme.palette.background.paper,
                           }}
                         />
 
@@ -294,6 +347,17 @@ function Cart() {
 
               <Divider />
 
+              {/* Checkout Error Alert */}
+              {checkoutError && (
+                <Alert
+                  severity="error"
+                  onClose={() => setCheckoutError(null)}
+                  sx={{ mt: 2 }}
+                >
+                  {checkoutError}
+                </Alert>
+              )}
+
               {/* Cart Summary */}
               <Box
                 sx={{
@@ -380,12 +444,14 @@ function Cart() {
                       color: (theme) => theme.palette.primary.main,
                       textTransform: "none",
                       "&:focus": {
-                        outline: (theme) => `2px solid ${theme.palette.primary.main}`,
+                        outline: (theme) =>
+                          `2px solid ${theme.palette.primary.main}`,
                         outlineOffset: "2px",
                         boxShadow: "none",
                       },
                       "&:focus-visible": {
-                        outline: (theme) => `2px solid ${theme.palette.primary.main}`,
+                        outline: (theme) =>
+                          `2px solid ${theme.palette.primary.main}`,
                         outlineOffset: "2px",
                         boxShadow: "none",
                       },
@@ -400,22 +466,26 @@ function Cart() {
                   <Button
                     variant="contained"
                     color="primary"
+                    onClick={handleCheckout}
+                    disabled={checkoutLoading || items.length === 0}
                     sx={{
                       backgroundColor: (theme) => theme.palette.primary.main,
                       color: "#FFFFFF",
-                      fontWeight: 100,
+                      fontWeight: 400,
                       borderRadius: 2,
                       boxShadow: "none",
                       textTransform: "none",
                       border: "1px solid transparent",
                       transition: "all 0.3s ease",
                       "&:focus": {
-                        outline: (theme) => `2px solid ${theme.palette.primary.main}`,
+                        outline: (theme) =>
+                          `2px solid ${theme.palette.primary.main}`,
                         outlineOffset: "2px",
                         boxShadow: "none",
                       },
                       "&:focus-visible": {
-                        outline: (theme) => `2px solid ${theme.palette.primary.main}`,
+                        outline: (theme) =>
+                          `2px solid ${theme.palette.primary.main}`,
                         outlineOffset: "2px",
                         boxShadow: "none",
                       },
@@ -423,9 +493,21 @@ function Cart() {
                         borderColor: (theme) => theme.palette.primary.main,
                         transform: "translateY(-4px)",
                       },
+                      "&:disabled": {
+                        opacity: 0.6,
+                      },
                     }}
                   >
-                    Checkout
+                    {checkoutLoading ? (
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <CircularProgress size={20} sx={{ color: "#FFFFFF" }} />
+                        Processing...
+                      </Box>
+                    ) : (
+                      "Checkout"
+                    )}
                   </Button>
                 </Box>
               </Box>

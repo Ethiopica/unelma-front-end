@@ -3,7 +3,8 @@ import { getAuthToken, clearAuthData } from "../../utils/authUtils";
 
 // Get API base URL from environment variable or use default
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://unelma-laravel-backend-production.up.railway.app/api";
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -30,7 +31,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor - handle errors globally (including 401/403)
+// Response interceptor - handle errors globally (including 401)
 apiClient.interceptors.response.use(
   (response) => {
     return response;
@@ -39,23 +40,22 @@ apiClient.interceptors.response.use(
     // Handle common errors here
     if (error.response) {
       // Server responded with error status
-      console.error("API Error:", error.response.data);
-
-      // Handle unauthorized (401) or forbidden (403) errors
-      if (error.response.status === 401 || error.response.status === 403) {
+      // Handle unauthorized (401)
+      if (error.response.status === 401) {
         // Clear auth data and redirect to login using utility
         clearAuthData();
         // Components using AuthContext will automatically update when auth state changes
-        if (window.location.pathname !== "/user" && window.location.pathname !== "/login") {
+        if (
+          window.location.pathname !== "/user" &&
+          window.location.pathname !== "/login"
+        ) {
           window.location.href = "/login";
         }
       }
     } else if (error.request) {
       // Request was made but no response received
-      console.error("Network Error:", error.request);
     } else {
       // Something else happened
-      console.error("Error:", error.message);
     }
     return Promise.reject(error);
   }
@@ -63,4 +63,3 @@ apiClient.interceptors.response.use(
 
 export default apiClient;
 export { API_BASE_URL };
-

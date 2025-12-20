@@ -63,6 +63,20 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
+  // Listen for token expiration events from axios interceptor
+  useEffect(() => {
+    const handleTokenExpired = () => {
+      setUser(null);
+      setToken(null);
+    };
+
+    window.addEventListener("auth:token-expired", handleTokenExpired);
+
+    return () => {
+      window.removeEventListener("auth:token-expired", handleTokenExpired);
+    };
+  }, []);
+
   const login = async ({ email, password, remember = false }) => {
     setLoading(true);
     setError(null);
@@ -107,7 +121,6 @@ export function AuthProvider({ children }) {
       }
     } catch (e) {
       // Logout even if API call fails
-      console.error("Logout API error:", e);
     } finally {
       clearAuthData();
       setMessage("Logged out successfully");
@@ -126,7 +139,8 @@ export function AuthProvider({ children }) {
       try {
         // Try to verify token with backend (optional)
         const baseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+          import.meta.env.VITE_API_BASE_URL ||
+          "https://unelma-laravel-backend-production.up.railway.app/api";
         const response = await axios.get(`${baseUrl}/user`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -158,11 +172,8 @@ export function AuthProvider({ children }) {
           } catch {
             clearAuthData();
           }
-        } else if (
-          error.response?.status === 401 ||
-          error.response?.status === 403
-        ) {
-          // Token is invalid (401/403), clear it
+        } else if (error.response?.status === 401) {
+          // Token is invalid (401), clear it
           clearAuthData();
           setUser(null);
           setToken(null);
