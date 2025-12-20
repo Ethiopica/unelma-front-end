@@ -34,7 +34,7 @@ export default defineConfig({
       "@mui/icons-material",
       "react",
       "react-dom",
-      "react-router-dom",
+      "react-router",
     ],
   },
   define: {
