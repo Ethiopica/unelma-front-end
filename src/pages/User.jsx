@@ -160,7 +160,8 @@ function User() {
         setPurchasesError(null);
         try {
           const baseUrl =
-            import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+            import.meta.env.VITE_API_BASE_URL ||
+            "https://unelma-laravel-backend-production.up.railway.app/api";
           const res = await axios.get(`${baseUrl}/profile/purchases`, {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -200,7 +201,8 @@ function User() {
         setSubscriptionsError(null);
         try {
           const baseUrl =
-            import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+            import.meta.env.VITE_API_BASE_URL ||
+            "https://unelma-laravel-backend-production.up.railway.app/api";
           // Try profile/subscriptions first, fallback to subscriptions
           let res;
           try {
@@ -592,7 +594,8 @@ function User() {
 
     try {
       const baseUrl =
-        import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+        import.meta.env.VITE_API_BASE_URL ||
+            "https://unelma-laravel-backend-production.up.railway.app/api";
 
       if (cancelType === "purchase") {
         // Cancel purchase via API (if cancellable)

@@ -139,7 +139,8 @@ export function AuthProvider({ children }) {
       try {
         // Try to verify token with backend (optional)
         const baseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+          import.meta.env.VITE_API_BASE_URL ||
+          "https://unelma-laravel-backend-production.up.railway.app/api";
         const response = await axios.get(`${baseUrl}/user`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,

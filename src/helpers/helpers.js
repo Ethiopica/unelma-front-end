@@ -43,7 +43,8 @@ export const getImageUrl = (imageUrl) => {
   // Get Laravel base URL from environment or use default
   // Remove /api from the end if present, as images are served from the root
   const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+    import.meta.env.VITE_API_BASE_URL ||
+    "https://unelma-laravel-backend-production.up.railway.app/api";
   const laravelBaseUrl = apiBaseUrl.replace(/\/api$/, "");
 
   // Handle relative paths (starting with /)

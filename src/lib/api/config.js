@@ -3,7 +3,8 @@ import { getAuthToken, clearAuthData } from "../../utils/authUtils";
 
 // Get API base URL from environment variable or use default
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://unelma-laravel-backend-production.up.railway.app/api";
 
 // Create axios instance with default config
 const apiClient = axios.create({
