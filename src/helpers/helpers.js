@@ -1,10 +1,10 @@
 // Use the glossy logo from public folder as placeholder
 const placeholderLogo = "/unelma_glossy_logo.webp";
 
-// Supabase storage base URL
+// Supabase S3 storage public URL (from backend AWS_URL config)
 const SUPABASE_STORAGE_URL =
-  import.meta.env.VITE_SUPABASE_STORAGE_URL ||
-  "https://yxwzynfceimoymtczjtat.supabase.co/storage/v1/object/public/images";
+  import.meta.env.VITE_STORAGE_URL ||
+  "https://Yxwzynfceimoymtczjtat.supabase.co/storage/v1/object/public/images";
 
 export const timeConversion = (time) => {
   return new Date(time).toLocaleDateString("en-US", {
@@ -25,7 +25,7 @@ export const updateFavoriteCount = (items = [], itemId, isAddition) => {
 
 /**
  * Converts a relative image URL from Laravel to an absolute URL
- * Supports Supabase storage URLs
+ * Supports Supabase S3 storage
  * Returns placeholder image if no imageUrl is provided
  * @param {string} imageUrl - The image URL from the API (can be relative or absolute)
  * @returns {string} - Absolute URL to the image or placeholder
@@ -46,12 +46,12 @@ export const getImageUrl = (imageUrl) => {
     return normalizedUrl;
   }
 
-  // Remove leading slash or /storage/ prefix if present
+  // Clean the path - remove /storage/ prefix if present
   let cleanPath = normalizedUrl
     .replace(/^\/storage\//, "")
     .replace(/^\//, "");
 
-  // Check if this is a Supabase storage path (products/, services/, blogs/, profiles/)
+  // For storage paths (products/, services/, blogs/, profiles/), use Supabase
   if (
     cleanPath.startsWith("products/") ||
     cleanPath.startsWith("services/") ||
@@ -61,18 +61,16 @@ export const getImageUrl = (imageUrl) => {
     return `${SUPABASE_STORAGE_URL}/${cleanPath}`;
   }
 
-  // Fallback: construct URL using Laravel backend
+  // Fallback: use Laravel backend for other paths
   const apiBaseUrl =
     import.meta.env.VITE_API_BASE_URL ||
     "https://unelma-laravel-backend-production.up.railway.app/api";
   const laravelBaseUrl = apiBaseUrl.replace(/\/api$/, "");
 
-  // Handle relative paths (starting with /)
   if (normalizedUrl.startsWith("/")) {
     return `${laravelBaseUrl}${normalizedUrl}`;
   }
 
-  // Handle paths without leading slash
   return `${laravelBaseUrl}/${normalizedUrl}`;
 };
 
