@@ -366,8 +366,9 @@ function Services() {
                       }}
                     >
                       {/* Service Image */}
-                      {(service.image_local_url ||
-                        service.image_url ||
+                      {(service.image_url ||
+                        service.full_image_url ||
+                        service.image_local_url ||
                         service.image) && (
                         <Box
                           sx={{
@@ -381,8 +382,9 @@ function Services() {
                           <Box
                             component="img"
                             src={getImageUrl(
-                              service.image_local_url ||
-                                service.image_url ||
+                              service.image_url ||
+                                service.full_image_url ||
+                                service.image_local_url ||
                                 service.image
                             )}
                             alt={service.name}

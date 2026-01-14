@@ -105,7 +105,7 @@ function SuggestedProducts({ currentProduct, allProducts }) {
               component="img"
               onClick={() => handleProductClick(product)}
               src={getImageUrl(
-                product.image_local_url || product.image_url || product.image
+                product.image_url || product.full_image_url || product.image_local_url || product.image
               )}
               alt={product.name}
               onError={(e) => {

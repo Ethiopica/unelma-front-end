@@ -238,7 +238,7 @@ function ServiceDetail() {
       }}
     >
       {/* Hero Image Section */}
-      {(service.image_local_url || service.image_url || service.image) && (
+      {(service.image_url || service.full_image_url || service.image_local_url || service.image) && (
         <Box
           sx={{
             position: "relative",
@@ -251,7 +251,7 @@ function ServiceDetail() {
           <Box
             component="img"
             src={getImageUrl(
-              service.image_local_url || service.image_url || service.image
+              service.image_url || service.full_image_url || service.image_local_url || service.image
             )}
             alt={service.name}
             onError={(e) => {

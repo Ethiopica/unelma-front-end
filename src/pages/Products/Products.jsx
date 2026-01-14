@@ -320,7 +320,7 @@ function Products() {
                         fetchPriority="high"
                         onClick={() => handleProductClick(p)}
                         src={getImageUrl(
-                          p.image_local_url || p.image_url || p.image
+                          p.image_url || p.full_image_url || p.image_local_url || p.image
                         )}
                         alt={p.name}
                         onError={(e) => {

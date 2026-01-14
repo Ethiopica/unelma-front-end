@@ -208,7 +208,7 @@ function Cart() {
                         <CardMedia
                           component="img"
                           src={getImageUrl(
-                            item.image_local_url || item.image_url || item.image
+                            item.image_url || item.full_image_url || item.image_local_url || item.image
                           )}
                           alt={item.name}
                           onError={(e) => {

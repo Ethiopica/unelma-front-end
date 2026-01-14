@@ -201,7 +201,7 @@ function ProductDetail() {
       }}
     >
       {/* Hero Image Section */}
-      {(product?.image_local_url || product?.image_url || product?.image) && (
+      {(product?.image_url || product?.full_image_url || product?.image_local_url || product?.image) && (
         <Box
           sx={{
             position: "relative",
@@ -214,7 +214,7 @@ function ProductDetail() {
           <Box
             component="img"
             src={getImageUrl(
-              product?.image_local_url || product?.image_url || product?.image
+              product?.image_url || product?.full_image_url || product?.image_local_url || product?.image
             )}
             alt={product.name}
             onError={(e) => {
