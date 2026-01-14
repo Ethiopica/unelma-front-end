@@ -1,6 +1,11 @@
 // Use the glossy logo from public folder as placeholder
 const placeholderLogo = "/unelma_glossy_logo.webp";
 
+// Supabase storage base URL
+const SUPABASE_STORAGE_URL =
+  import.meta.env.VITE_SUPABASE_STORAGE_URL ||
+  "https://yxwzynfceimoymtczjtat.supabase.co/storage/v1/object/public/images";
+
 export const timeConversion = (time) => {
   return new Date(time).toLocaleDateString("en-US", {
     year: "numeric",
@@ -20,6 +25,7 @@ export const updateFavoriteCount = (items = [], itemId, isAddition) => {
 
 /**
  * Converts a relative image URL from Laravel to an absolute URL
+ * Supports Supabase storage URLs
  * Returns placeholder image if no imageUrl is provided
  * @param {string} imageUrl - The image URL from the API (can be relative or absolute)
  * @returns {string} - Absolute URL to the image or placeholder
@@ -40,8 +46,22 @@ export const getImageUrl = (imageUrl) => {
     return normalizedUrl;
   }
 
-  // Get Laravel base URL from environment or use default
-  // Remove /api from the end if present, as images are served from the root
+  // Remove leading slash or /storage/ prefix if present
+  let cleanPath = normalizedUrl
+    .replace(/^\/storage\//, "")
+    .replace(/^\//, "");
+
+  // Check if this is a Supabase storage path (products/, services/, blogs/, profiles/)
+  if (
+    cleanPath.startsWith("products/") ||
+    cleanPath.startsWith("services/") ||
+    cleanPath.startsWith("blogs/") ||
+    cleanPath.startsWith("profiles/")
+  ) {
+    return `${SUPABASE_STORAGE_URL}/${cleanPath}`;
+  }
+
+  // Fallback: construct URL using Laravel backend
   const apiBaseUrl =
     import.meta.env.VITE_API_BASE_URL ||
     "https://unelma-laravel-backend-production.up.railway.app/api";
@@ -52,7 +72,7 @@ export const getImageUrl = (imageUrl) => {
     return `${laravelBaseUrl}${normalizedUrl}`;
   }
 
-  // Handle paths without leading slash (e.g., "storage/products/image.jpg")
+  // Handle paths without leading slash
   return `${laravelBaseUrl}/${normalizedUrl}`;
 };
 
